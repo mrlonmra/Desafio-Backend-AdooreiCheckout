@@ -3,10 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Models\Sale;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class SaleController extends Controller
 {
+    /**
+     * Lista todas as vendas com os produtos relacionados.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $sales = Sale::with('products')->get(); // Carrega os produtos relacionados a cada venda
@@ -25,6 +31,12 @@ class SaleController extends Controller
         return response()->json($formattedSales);
     }
 
+    /**
+     * Formata os produtos para inclusão no retorno JSON.
+     *
+     * @param  \Illuminate\Database\Eloquent\Collection  $products
+     * @return array
+     */
     private function formatProducts($products)
     {
         $formattedProducts = [];
@@ -43,19 +55,104 @@ class SaleController extends Controller
         return $formattedProducts;
     }
 
-    // public function store(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'amount' => 'required|numeric',
-    //     ]);
+    /**
+     * Cria uma nova venda com os produtos fornecidos.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.amount' => 'required|numeric',
+        ]);
 
-    //     $sale = Sale::create($validatedData);
+        // Obter detalhes dos produtos
+        $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
 
-    //     $this->attachProductsToSale($sale, $request);
+        // Calcular o amount total somando os preços multiplicados pelas quantidades
+        $totalAmount = collect($validatedData['products'])->sum(function ($item) use ($productsDetails) {
+            $product = $productsDetails->where('id', $item['product_id'])->first();
+            return $product->price * $item['amount'];
+        });
 
-    //     return response()->json($sale, 201);
-    // }
+        // Criar a venda
+        $sale = Sale::create(['amount' => $totalAmount]);
 
+        // Anexar os produtos à venda
+        $this->attachProductsToSale($sale, $validatedData['products']);
+
+        return response()->json($sale, 201);
+    }
+
+    // Método para associar produtos a uma venda
+    private function attachProductsToSale(Sale $sale, array $products)
+    {
+        foreach ($products as $productData) {
+            $product = Product::find($productData['product_id']);
+
+            // Adiciona o produto à venda com a quantidade especificada
+            $sale->products()->attach($product, ['amount' => $productData['amount']]);
+        }
+    }
+
+    /**
+     * Adiciona produtos a uma venda existente.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function addProductsToSale(Request $request, $id)
+    {
+        $validatedData = $request->validate([
+            'products' => 'required|array',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.amount' => 'required|numeric',
+        ]);
+
+        $sale = Sale::findOrFail($id);
+
+        // Obter detalhes dos produtos
+        $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
+
+        foreach ($validatedData['products'] as $item) {
+            $existingProduct = $sale->products()->where('product_id', $item['product_id'])->first();
+
+            if ($existingProduct) {
+                // Se o produto já existe na venda, atualiza os valores
+                $existingProduct->pivot->update([
+                    'amount' => $existingProduct->pivot->amount + $item['amount'],
+                ]);
+            } else {
+                // Se o produto não existe na venda, adiciona-o
+                $product = $productsDetails->where('id', $item['product_id'])->first();
+                $sale->products()->attach($product->id, [
+                    'amount' => $item['amount'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        // Recalcular o amount total da venda
+        $sale->load('products');
+        $totalAmount = $sale->products->sum(function ($product) {
+            return $product->price * $product->pivot->amount;
+        });
+        $sale->update(['amount' => $totalAmount]);
+
+        return response()->json($sale, 200);
+    }
+
+    /**
+     * Exibe os detalhes de uma venda específica.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show($id)
     {
         $sale = Sale::with('products')->findOrFail($id); // Carrega os produtos relacionados à venda
@@ -69,42 +166,17 @@ class SaleController extends Controller
         return response()->json($formattedSale);
     }
 
-    public function destroy($id)
+    /**
+     * Cancela uma venda.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cancel($id)
     {
         $sale = Sale::findOrFail($id);
         $sale->delete();
 
-        return response()->json(null, 204);
-    }
-
-    public function addProducts(Request $request, $id)
-    {
-        $sale = Sale::findOrFail($id);
-
-        $validatedData = $request->validate([
-            'product_ids' => 'required|array',
-            'product_ids.*' => 'exists:products,id',
-            'amounts' => 'required|array',
-            'amounts.*' => 'required|numeric',
-        ]);
-
-        $this->attachProductsToSale($sale, $request);
-
-        return response()->json($sale, 200);
-    }
-
-    private function attachProductsToSale(Sale $sale, Request $request)
-    {
-        if ($request->has('product_ids') && $request->has('amounts')) {
-            $validatedProductData = $request->validate([
-                'product_ids' => 'array',
-                'product_ids.*' => 'exists:products,id',
-                'amounts' => 'array',
-                'amounts.*' => 'numeric',
-            ]);
-
-            // Adicionar produtos à venda com quantidades
-            $sale->products()->attach(array_combine($validatedProductData['product_ids'], $validatedProductData['amounts']));
-        }
+        return response()->json(['message' => 'Venda cancelada com sucesso', 'status' => 'success'], 200);
     }
 }

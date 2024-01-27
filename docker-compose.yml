@@ -2,6 +2,7 @@ version: '3'
 
 services:
   app:
+    # Configuração dos serviços da aplicação.
     build:
       context: .
       dockerfile: Dockerfile
@@ -15,16 +16,22 @@ services:
       - minha-rede
 
   mysql:
+    # Configuração do MySQL.
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: adoorei_checkout_db
-      MYSQL_PASSWORD: root
     ports:
       - "3306:3306"
-    networks:
-      - minha-rede
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - desafio-backend-adoorei_mysql_data:/var/lib/mysql
 
 networks:
   minha-rede:
     driver: bridge
+    # Boa prática: Isolar serviços em uma rede personalizada para evitar o acesso direto de serviços externos.
+
+volumes:
+  desafio-backend-adoorei_mysql_data:
+    # Boa prática: Usar volumes para armazenar dados persistentes e garantir a integridade dos dados em ambientes de produção.
