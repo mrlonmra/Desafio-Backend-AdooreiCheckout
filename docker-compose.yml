@@ -9,3 +9,22 @@ services:
       - "8000:8000"
     volumes:
       - .:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - minha-rede
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: adoorei_checkout_db
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    networks:
+      - minha-rede
+
+networks:
+  minha-rede:
+    driver: bridge

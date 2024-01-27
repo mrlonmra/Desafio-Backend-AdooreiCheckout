@@ -9,27 +9,64 @@ class SaleController extends Controller
 {
     public function index()
     {
-        $sales = Sale::all();
-        return response()->json($sales);
+        $sales = Sale::with('products')->get(); // Carrega os produtos relacionados a cada venda
+        $formattedSales = [];
+
+        foreach ($sales as $sale) {
+            $formattedSale = [
+                'sales_id' => $sale->id,
+                'amount' => $sale->amount,
+                'products' => $this->formatProducts($sale->products),
+            ];
+
+            $formattedSales[] = $formattedSale;
+        }
+
+        return response()->json($formattedSales);
     }
 
-    public function store(Request $request)
+    private function formatProducts($products)
     {
-        $validatedData = $request->validate([
-            'amount' => 'required|numeric',
-        ]);
+        $formattedProducts = [];
 
-        $sale = Sale::create($validatedData);
+        foreach ($products as $product) {
+            $formattedProduct = [
+                'product_id' => $product->id,
+                'nome' => $product->name,
+                'price' => $product->price,
+                'amount' => $product->pivot->amount, // A quantidade de produtos vendidos
+            ];
 
-        $this->attachProductsToSale($sale, $request);
+            $formattedProducts[] = $formattedProduct;
+        }
 
-        return response()->json($sale, 201);
+        return $formattedProducts;
     }
+
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'amount' => 'required|numeric',
+    //     ]);
+
+    //     $sale = Sale::create($validatedData);
+
+    //     $this->attachProductsToSale($sale, $request);
+
+    //     return response()->json($sale, 201);
+    // }
 
     public function show($id)
     {
-        $sale = Sale::findOrFail($id);
-        return response()->json($sale);
+        $sale = Sale::with('products')->findOrFail($id); // Carrega os produtos relacionados à venda
+
+        $formattedSale = [
+            'sales_id' => $sale->id,
+            'amount' => $sale->amount,
+            'products' => $this->formatProducts($sale->products),
+        ];
+
+        return response()->json($formattedSale);
     }
 
     public function destroy($id)
