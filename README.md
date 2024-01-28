@@ -18,7 +18,7 @@ Este projeto consiste em uma API REST desenvolvida em Laravel para o Adoorei Che
 **Tecnologias Empregadas:**
 - Laravel;
 - Docker;
-- PHPUnit.
+- Swagger Documentation.
 
 **Instruções para Execução:**
 Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina. Isso é necessário para criar e orquestrar os contêineres necessários para o projeto.
@@ -31,7 +31,6 @@ Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina.
 6. Instale as Dependências do Composer: "docker-compose exec app composer install"
 7. Acesse a Aplicação: Após essas etapas, a aplicação Laravel deve estar acessível em http://localhost:8000.
 8. A documentação completa dos endpoints está disponível no Swagger através do link http://localhost:8000/api/documentation#/default.
-9. Se desejar, realize os testes unitários.
  
 **Contribuições:**
 - Contribuições são incentivadas! Sinta-se à vontade para abrir problemas ou enviar solicitações de pull.
