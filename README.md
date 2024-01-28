@@ -31,6 +31,9 @@ Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina.
 6. Instale as Dependências do Composer: "docker-compose exec app composer install"
 7. Acesse a Aplicação: Após essas etapas, a aplicação Laravel deve estar acessível em http://localhost:8000.
 8. A documentação completa dos endpoints está disponível no Swagger através do link http://localhost:8000/api/documentation#/default.
+
+![image](https://github.com/mrlonmra/desafio-backend-adoorei/assets/26064875/c0520ffa-f0db-4350-8715-62fa34725b27)
+
  
 **Contribuições:**
 - Contribuições são incentivadas! Sinta-se à vontade para abrir problemas ou enviar solicitações de pull.
