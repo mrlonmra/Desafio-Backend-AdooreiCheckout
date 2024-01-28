@@ -26,6 +26,6 @@ class AuthenticateAdooreiAPI
 
     public function tokenValid($token)
     {
-        return $token === "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.XzL0oBNu7IxHvC-UlmYb6iGdBkOWZQmRyi_9yZc2uA8";
+        return $token === "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
     }
 }

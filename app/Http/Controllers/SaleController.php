@@ -56,6 +56,26 @@ class SaleController extends Controller
     }
 
     /**
+     * Formatar os detalhes dos produtos para a resposta.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $productsDetails
+     * @param array $selectedProducts
+     * @return array
+     */
+    private function formatProductsResponse($productsDetails, $selectedProducts)
+    {
+        return collect($selectedProducts)->map(function ($item) use ($productsDetails) {
+            $product = $productsDetails->where('id', $item['product_id'])->first();
+            return [
+                'product_id' => $product->id,
+                'nome' => $product->name,
+                'price' => $product->price,
+                'amount' => $item['amount'],
+            ];
+        })->toArray();
+    }
+
+    /**
      * Cria uma nova venda com os produtos fornecidos.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -84,8 +104,16 @@ class SaleController extends Controller
         // Anexar os produtos à venda
         $this->attachProductsToSale($sale, $validatedData['products']);
 
-        return response()->json($sale, 201);
+        // Montar a resposta no formato desejado
+        $response = [
+            'sales_id' => $sale->getKey(), // Obter automaticamente o ID da venda
+            'amount' => $totalAmount,
+            'products' => $this->formatProductsResponse($productsDetails, $validatedData['products']),
+        ];
+
+        return response()->json($response, 201);
     }
+
 
     // Método para associar produtos a uma venda
     private function attachProductsToSale(Sale $sale, array $products)
