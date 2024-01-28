@@ -1,0 +1,509 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Adoorei Checkout - API",
+    "description": "<hr style=\"height: 5px;background: #007500;margin: 20px 0;box-shadow: 0px 3px 5px 0px rgb(204 204 204);\"/>\n\n\n<div align=\"center\">\n  <img src=\"https://adoorei.s3.us-east-2.amazonaws.com/images/loje_teste_logoadoorei_1662476663.png\"/>\n</div>\n\n\nPara iniciar o projeto basta seguir as orientações abaixo e utilizar o token abaixo para que você consiga realizar as requisições nos End-Points. <br><br>Para autenticar as requisições atráves do token solicitado basta adicionar o seguinte token no campo \"X-TOKEN-ADOOREI-API</i> - <b>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</b>\" <Br>\n  * <b>Docker e Docker Compose</b>: Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina. Isso é necessário para criar e orquestrar os contêineres necessários para o projeto.\n  * <b>Git</b>: Para clonar o repositório.\n  * <b>Arquivo .env</b>: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.\n  * <b>Docker Compose</b>: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.\n  \n  * <b>Construa os Contêineres Docker:</b> \"docker-compose build\"\n  * <b>Inicie os Contêineres Docker:</b> \"docker-compose up -d\"\n  * <b>Instale as Dependências do Composer:</b> \"docker-compose exec app composer install\"\n  * <b>Execute as Migrações e Sementes:</b> \"docker-compose exec app php artisan migrate --seed\"\n  * <b>Acesse a Aplicação:</b> Após essas etapas, a aplicação Laravel deve estar acessível em http://localhost:8000.\n\n<div>\n    <a href=\"https://wa.me/5562985009520\"><img src=\"https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white\" alt=\"WhatsApp\"></a>\n    <a href=\"https://www.linkedin.com/in/marlongmoura\"><img src=\"https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white\" alt=\"LinkedIn\"></a>\n</div>\n",
+    "version": "1.3.0",
+    "contact": {
+      "name": "Marlon Gomes",
+      "email": "mrlon.mra@gmail.com"
+    }
+  },
+  "paths": {
+    "/api/products": {
+      "get": {
+        "summary": "Listar produtos disponíveis",
+        "description": "Lista todos os produtos disponiveis para venda",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": {
+                "products": [
+                  {
+                    "id": 1,
+                    "name": "Celular 1",
+                    "price": "1800.00",
+                    "description": "Lorem ipsum 1"
+                  },
+                  {
+                    "id": 2,
+                    "name": "Celular 2",
+                    "price": "1400.00",
+                    "description": "Lorem ipsum 2"
+                  },
+                  {
+                    "id": 3,
+                    "name": "Celular 3",
+                    "price": "2200.00",
+                    "description": "Lorem ipsum 3"
+                  },
+                  {
+                    "id": 4,
+                    "name": "Celular 4",
+                    "price": "2147.00",
+                    "description": "Lorem ipsum 4"
+                  },
+                  {
+                    "id": 5,
+                    "name": "Celular 5",
+                    "price": "2467.00",
+                    "description": "Lorem ipsum 5"
+                  },
+                  {
+                    "id": 6,
+                    "name": "Celular 6",
+                    "price": "2064.00",
+                    "description": "Lorem ipsum 6"
+                  },
+                  {
+                    "id": 7,
+                    "name": "Celular 7",
+                    "price": "1263.00",
+                    "description": "Lorem ipsum 7"
+                  },
+                  {
+                    "id": 8,
+                    "name": "Celular 8",
+                    "price": "2578.00",
+                    "description": "Lorem ipsum 8"
+                  },
+                  {
+                    "id": 9,
+                    "name": "Celular 9",
+                    "price": "1155.00",
+                    "description": "Lorem ipsum 9"
+                  },
+                  {
+                    "id": 10,
+                    "name": "Celular 10",
+                    "price": "1033.00",
+                    "description": "Lorem ipsum 10"
+                  }
+                ]
+              }
+            }
+          },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales": {
+      "get": {
+        "summary": "Consultar vendas realizadas",
+        "description": "Lista todas as vendas realizadas, detalhando os produtos adquiridos em cada venda, junto com suas quantidades e os cálculos totais. Não será listada vendas canceladas.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "examples": {
+              "application/json": [
+                {
+                  "sales_id": 9,
+                  "amount": "30650.00",
+                  "products": [
+                    {
+                      "product_id": 1,
+                      "nome": "Celular 1",
+                      "price": "1800.00",
+                      "amount": 3
+                    },
+                    {
+                      "product_id": 2,
+                      "nome": "Celular 2",
+                      "price": "1400.00",
+                      "amount": 1
+                    },
+                    {
+                      "product_id": 3,
+                      "nome": "Celular 3",
+                      "price": "2200.00",
+                      "amount": 2
+                    },
+                    {
+                      "product_id": 4,
+                      "nome": "Celular 4",
+                      "price": "2147.00",
+                      "amount": 1
+                    },
+                    {
+                      "product_id": 6,
+                      "nome": "Celular 6",
+                      "price": "2064.00",
+                      "amount": 2
+                    },
+                    {
+                      "product_id": 7,
+                      "nome": "Celular 7",
+                      "price": "1263.00",
+                      "amount": 3
+                    },
+                    {
+                      "product_id": 8,
+                      "nome": "Celular 8",
+                      "price": "2578.00",
+                      "amount": 1
+                    },
+                    {
+                      "product_id": 9,
+                      "nome": "Celular 9",
+                      "price": "1155.00",
+                      "amount": 5
+                    },
+                    {
+                      "product_id": 10,
+                      "nome": "Celular 10",
+                      "price": "1033.00",
+                      "amount": 1
+                    }
+                  ]
+                },
+                {
+                  "sales_id": 10,
+                  "amount": "3789.00",
+                  "products": [
+                    {
+                      "product_id": 7,
+                      "nome": "Celular 7",
+                      "price": "1263.00",
+                      "amount": 3
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cadastrar nova venda",
+        "description": "Realiza o cadastro de uma nova venda no banco de dados.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "product_id": {
+                        "type": "integer"
+                      },
+                      "amount": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "products": [
+                  {
+                    "product_id": 1,
+                    "amount": 2
+                  },
+                  {
+                    "product_id": 2,
+                    "amount": 3
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Venda Cadastrada",
+            "examples": {
+              "application/json": {
+                "sales_id": 30,
+                "amount": "3789.00",
+                "products": {
+                  "product_id": 7,
+                  "nome": "Celular 7",
+                  "price": "1263.00",
+                  "amount": 3
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/{id}": {
+      "get": {
+        "summary": "Consultar uma venda específica",
+        "description": "Adicione o ID da venda para verificar os dados dessa em especifico. Vendas canceladas não irão ser apresentadas.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Consultar Venda",
+            "examples": {
+              "application/json": {
+                "sales_id": 30,
+                "amount": "3789.00",
+                "products": {
+                  "product_id": 7,
+                  "nome": "Celular 7",
+                  "price": "1263.00",
+                  "amount": 3
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancelar uma venda",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "examples": {
+              "application/json": {
+                "message": "Venda cancelada com sucesso",
+                "status": "success"
+              }
+            }
+          },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sales/{id}/add-products": {
+      "post": {
+        "summary": "Cadastrar novos produtos a uma venda",
+        "description": "Cadastra novos produtos em uma venda.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-TOKEN-ADOOREI-API",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "products": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "product_id": {
+                        "type": "integer"
+                      },
+                      "amount": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "products": [
+                  {
+                    "product_id": 3,
+                    "amount": 2
+                  },
+                  {
+                    "product_id": 5,
+                    "amount": 1
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Created",
+            "examples": {
+              "application/json": {
+                "id": 10,
+                "amount": 6256,
+                "created_at": "2024-01-28T14:02:19.000000Z",
+                "updated_at": "2024-01-28T21:48:28.000000Z",
+                "deleted_at": null,
+                "products": [
+                  {
+                    "id": 7,
+                    "name": "Celular 7",
+                    "price": "1263.00",
+                    "description": "Lorem ipsum 7",
+                    "created_at": "2024-01-28T14:02:14.000000Z",
+                    "updated_at": "2024-01-28T14:02:14.000000Z",
+                    "pivot": {
+                      "sale_id": 10,
+                      "product_id": 7,
+                      "amount": 3
+                    }
+                  },
+                  {
+                    "id": 5,
+                    "name": "Celular 5",
+                    "price": "2467.00",
+                    "description": "Lorem ipsum 5",
+                    "created_at": "2024-01-28T14:02:14.000000Z",
+                    "updated_at": "2024-01-28T14:02:14.000000Z",
+                    "pivot": {
+                      "sale_id": 10,
+                      "product_id": 5,
+                      "amount": 1
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
+          },
+          "401": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
