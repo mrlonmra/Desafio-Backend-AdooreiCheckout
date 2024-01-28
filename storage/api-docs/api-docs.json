@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Adoorei Checkout - API",
-    "description": "<hr style=\"height: 5px;background: #007500;margin: 20px 0;box-shadow: 0px 3px 5px 0px rgb(204 204 204);\"/>\n\n\n<div align=\"center\">\n  <img src=\"https://adoorei.s3.us-east-2.amazonaws.com/images/loje_teste_logoadoorei_1662476663.png\"/>\n</div>\n\n\nPara iniciar o projeto basta seguir as orientações abaixo e utilizar o token abaixo para que você consiga realizar as requisições nos End-Points. <br><br>Para autenticar as requisições atráves do token solicitado basta adicionar o seguinte token no campo \"X-TOKEN-ADOOREI-API</i> - <b>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</b>\" <Br>\n  * <b>Docker e Docker Compose</b>: Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina. Isso é necessário para criar e orquestrar os contêineres necessários para o projeto.\n  * <b>Git</b>: Para clonar o repositório.\n  * <b>Arquivo .env</b>: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.\n  * <b>Docker Compose</b>: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.\n  \n  * <b>Construa os Contêineres Docker:</b> \"docker-compose build\"\n  * <b>Inicie os Contêineres Docker:</b> \"docker-compose up -d\"\n  * <b>Instale as Dependências do Composer:</b> \"docker-compose exec app composer install\"\n  * <b>Execute as Migrações e Sementes:</b> \"docker-compose exec app php artisan migrate --seed\"\n  * <b>Acesse a Aplicação:</b> Após essas etapas, a aplicação Laravel deve estar acessível em http://localhost:8000.\n\n<div>\n    <a href=\"https://wa.me/5562985009520\"><img src=\"https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white\" alt=\"WhatsApp\"></a>\n    <a href=\"https://www.linkedin.com/in/marlongmoura\"><img src=\"https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white\" alt=\"LinkedIn\"></a>\n</div>\n\n\n[![Run in Postman](https://run.pstmn.io/button.svg)](https://urlaqui.com)\n",
+    "description": "<hr style=\"height: 5px;background: #007500;margin: 20px 0;box-shadow: 0px 3px 5px 0px rgb(204 204 204);\"/>\n\n\n<div align=\"center\">\n  <img src=\"https://adoorei.s3.us-east-2.amazonaws.com/images/loje_teste_logoadoorei_1662476663.png\"/>\n</div>\n\n\nPara iniciar o projeto basta seguir as orientações abaixo e utilizar o token abaixo para que você consiga realizar as requisições nos End-Points. <br><br>Para autenticar as requisições atráves do token solicitado basta adicionar o seguinte token no campo \"X-TOKEN-ADOOREI-API</i> - <b>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9</b>\" <Br>\n  * <b>Docker e Docker Compose</b>: Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina. Isso é necessário para criar e orquestrar os contêineres necessários para o projeto.\n  * <b>Git</b>: Para clonar o repositório.\n  * <b>Arquivo .env</b>: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.\n  * <b>Docker Compose</b>: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.\n  \n  * <b>Construa os Contêineres Docker:</b> \"docker-compose build\"\n  * <b>Inicie os Contêineres Docker:</b> \"docker-compose up -d\"\n  * <b>Instale as Dependências do Composer:</b> \"docker-compose exec app composer install\"\n  * <b>Execute as Migrações e Sementes:</b> \"docker-compose exec app php artisan migrate --seed\"\n  * <b>Acesse a Aplicação:</b> Após essas etapas, a aplicação Laravel deve estar acessível em http://localhost:8000.\n\n<div>\n    <a href=\"https://wa.me/5562985009520\"><img src=\"https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white\" alt=\"WhatsApp\"></a>\n    <a href=\"https://www.linkedin.com/in/marlongmoura\"><img src=\"https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white\" alt=\"LinkedIn\"></a>\n</div>\n",
     "version": "1.3.0",
     "contact": {
       "name": "Marlon Gomes",
@@ -332,6 +332,14 @@
                 "error": "ACESSO NÃO AUTORIZADO"
               }
             }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
           }
         }
       },
@@ -361,8 +369,21 @@
               }
             }
           },
+          "401": {
+            "description": "ACESSO NÃO AUTORIZADO",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
+              }
+            }
+          },
           "404": {
-            "description": "No Content"
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
           }
         }
       }
@@ -462,6 +483,22 @@
                     }
                   }
                 ]
+              }
+            }
+          },
+          "404": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "Venda não encontrada"
+              }
+            }
+          },
+          "401": {
+            "description": "NOT FOUND",
+            "examples": {
+              "application/json": {
+                "error": "ACESSO NÃO AUTORIZADO"
               }
             }
           }

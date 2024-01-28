@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use App\Models\Sale;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -83,35 +85,43 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'products' => 'required|array',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.amount' => 'required|numeric',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'products' => 'required|array',
+                'products.*.product_id' => 'required|exists:products,id',
+                'products.*.amount' => 'required|numeric',
+            ]);
 
-        // Obter detalhes dos produtos
-        $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
+            // Obter detalhes dos produtos
+            $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
 
-        // Calcular o amount total somando os preços multiplicados pelas quantidades
-        $totalAmount = collect($validatedData['products'])->sum(function ($item) use ($productsDetails) {
-            $product = $productsDetails->where('id', $item['product_id'])->first();
-            return $product->price * $item['amount'];
-        });
+            // Calcular o amount total somando os preços multiplicados pelas quantidades
+            $totalAmount = collect($validatedData['products'])->sum(function ($item) use ($productsDetails) {
+                $product = $productsDetails->where('id', $item['product_id'])->first();
+                return $product->price * $item['amount'];
+            });
 
-        // Criar a venda
-        $sale = Sale::create(['amount' => $totalAmount]);
+            // Criar a venda
+            $sale = Sale::create(['amount' => $totalAmount]);
 
-        // Anexar os produtos à venda
-        $this->attachProductsToSale($sale, $validatedData['products']);
+            // Anexar os produtos à venda
+            $this->attachProductsToSale($sale, $validatedData['products']);
 
-        // Montar a resposta no formato desejado
-        $response = [
-            'sales_id' => $sale->getKey(), // Obter automaticamente o ID da venda
-            'amount' => $totalAmount,
-            'products' => $this->formatProductsResponse($productsDetails, $validatedData['products']),
-        ];
+            // Montar a resposta no formato desejado
+            $response = [
+                'sales_id' => $sale->getKey(), // Obter automaticamente o ID da venda
+                'amount' => $totalAmount,
+                'products' => $this->formatProductsResponse($productsDetails, $validatedData['products']),
+            ];
 
-        return response()->json($response, 201);
+            return response()->json($response, 201);
+
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
 
@@ -135,46 +145,56 @@ class SaleController extends Controller
      */
     public function addProductsToSale(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'products' => 'required|array',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.amount' => 'required|numeric',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'products' => 'required|array',
+                'products.*.product_id' => 'required|exists:products,id',
+                'products.*.amount' => 'required|numeric',
+            ]);
 
-        $sale = Sale::findOrFail($id);
+            $sale = Sale::findOrFail($id);
 
-        // Obter detalhes dos produtos
-        $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
+            // Obter detalhes dos produtos
+            $productsDetails = Product::whereIn('id', collect($validatedData['products'])->pluck('product_id'))->get();
 
-        foreach ($validatedData['products'] as $item) {
-            $existingProduct = $sale->products()->where('product_id', $item['product_id'])->first();
+            foreach ($validatedData['products'] as $item) {
+                $existingProduct = $sale->products()->where('product_id', $item['product_id'])->first();
 
-            if ($existingProduct) {
-                // Se o produto já existe na venda, atualiza os valores
-                $existingProduct->pivot->update([
-                    'amount' => $existingProduct->pivot->amount + $item['amount'],
-                ]);
-            } else {
-                // Se o produto não existe na venda, adiciona-o
-                $product = $productsDetails->where('id', $item['product_id'])->first();
-                $sale->products()->attach($product->id, [
-                    'amount' => $item['amount'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                if ($existingProduct) {
+                    // Se o produto já existe na venda, atualiza os valores
+                    $existingProduct->pivot->update([
+                        'amount' => $existingProduct->pivot->amount + $item['amount'],
+                    ]);
+                } else {
+                    // Se o produto não existe na venda, adiciona-o
+                    $product = $productsDetails->where('id', $item['product_id'])->first();
+                    $sale->products()->attach($product->id, [
+                        'amount' => $item['amount'],
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                }
             }
+
+            // Recalcular o amount total da venda
+            $sale->load('products');
+            $totalAmount = $sale->products->sum(function ($product) {
+                return $product->price * $product->pivot->amount;
+            });
+            $sale->update(['amount' => $totalAmount]);
+
+            return response()->json($sale, 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Venda não encontrada'], 404);
+
+        } catch (ValidationException $e) {
+            return response()->json(['error' => $e->errors()], 422);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
-
-        // Recalcular o amount total da venda
-        $sale->load('products');
-        $totalAmount = $sale->products->sum(function ($product) {
-            return $product->price * $product->pivot->amount;
-        });
-        $sale->update(['amount' => $totalAmount]);
-
-        return response()->json($sale, 200);
     }
-
     /**
      * Exibe os detalhes de uma venda específica.
      *
@@ -183,15 +203,23 @@ class SaleController extends Controller
      */
     public function show($id)
     {
-        $sale = Sale::with('products')->findOrFail($id); // Carrega os produtos relacionados à venda
+        try {
+            $sale = Sale::with('products')->findOrFail($id); // Carrega os produtos relacionados à venda
 
-        $formattedSale = [
-            'sales_id' => $sale->id,
-            'amount' => $sale->amount,
-            'products' => $this->formatProducts($sale->products),
-        ];
+            $formattedSale = [
+                'sales_id' => $sale->id,
+                'amount' => $sale->amount,
+                'products' => $this->formatProducts($sale->products),
+            ];
 
-        return response()->json($formattedSale);
+            return response()->json($formattedSale);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Venda não encontrada'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -202,9 +230,17 @@ class SaleController extends Controller
      */
     public function cancel($id)
     {
-        $sale = Sale::findOrFail($id);
-        $sale->delete();
+        try {
+            $sale = Sale::findOrFail($id);
+            $sale->delete();
 
-        return response()->json(['message' => 'Venda cancelada com sucesso', 'status' => 'success'], 200);
+            return response()->json(['message' => 'Venda cancelada com sucesso', 'status' => 'success'], 200);
+
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['error' => 'Venda não encontrada'], 404);
+
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }
