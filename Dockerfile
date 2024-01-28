@@ -37,5 +37,8 @@ RUN php artisan migrate --force
 # Executa as seeds "Popular as tabelas para fim de teste"
 RUN php artisan db:seed --force
 
+# Cria uma chave key para a aplicação Laravel
+RUN php artisan key:generate
+
 # Remove o servidor de desenvolvimento do CMD, já que não é recomendado para ambientes de produção
 CMD php artisan serve --host=0.0.0.0 --port=8000
