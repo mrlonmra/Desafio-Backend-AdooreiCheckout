@@ -23,7 +23,7 @@ Este projeto consiste em uma API REST desenvolvida em Laravel para o Adoorei Che
 **Instruções para Execução:**
 Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina. Isso é necessário para criar e orquestrar os contêineres necessários para o projeto.
 
-1. Git: Para clonar o repositório.
+1. Git: Clone o projeto através do link: https://github.com/mrlonmra/desafio-backend-adoorei.git
 2. Arquivo .env: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.
 3. Docker Compose: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.
 4. Construa os Contêineres Docker: "docker-compose build"
