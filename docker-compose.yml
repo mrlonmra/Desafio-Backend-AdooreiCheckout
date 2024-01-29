@@ -12,8 +12,7 @@ services:
       - .:/var/www/html
     depends_on:
       - mysql
-    networks:
-      - minha-rede
+
 
   mysql:
     # Configuração do MySQL.
@@ -27,11 +26,6 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       - desafio-backend-adoorei_mysql_data:/var/lib/mysql
-
-networks:
-  minha-rede:
-    driver: bridge
-    # Boa prática: Isolar serviços em uma rede personalizada para evitar o acesso direto de serviços externos.
 
 volumes:
   desafio-backend-adoorei_mysql_data:
