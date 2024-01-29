@@ -19,6 +19,7 @@ A robustez e confiabilidade do código são garantidas por meio da implementaç�
 **Tecnologias Empregadas:**
 - Laravel;
 - Docker;
+- PHPUnit
 - Swagger Documentation.
 
 **Instruções para Execução:**
