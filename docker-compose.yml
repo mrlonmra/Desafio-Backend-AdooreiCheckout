@@ -19,6 +19,7 @@ services:
     # Configuração do MySQL.
     image: mysql:8.0
     environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: adoorei_checkout_db
     ports:
