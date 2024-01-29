@@ -31,11 +31,14 @@ COPY . .
 # Carregua as dependências do Composer
 RUN composer dump-autoload --optimize
 
+# Cria uma chave key para a aplicação Laravel
+RUN php artisan key:generate
+
 # Executa as migrações
-RUN php artisan migrate --force
+# RUN php artisan migrate --force
 
 # Executa as seeds "Popular as tabelas para fim de teste"
-RUN php artisan db:seed --force
+# RUN php artisan db:seed --force
 
 # Remove o servidor de desenvolvimento do CMD, já que não é recomendado para ambientes de produção
 CMD php artisan serve --host=0.0.0.0 --port=8000
