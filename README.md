@@ -5,7 +5,8 @@
 
 # Desafio Adoorei - API Laravel
 
-Este projeto consiste em uma API REST desenvolvida em Laravel para o Adoorei Checkout, uma aplicação fictícia da Loja ABC LTDA, destinada a registrar vendas de celulares. Desde a configuração inicial do ambiente com Docker até a implementação de funcionalidades avançadas, como testes unitários, documentação abrangente dos endpoints e a aplicação de práticas de desenvolvimento, tais como Clean Architecture e Conventional Commits.
+Este projeto apresenta uma API REST desenvolvida em Laravel para o Adoorei Checkout, uma aplicação fictícia da Loja ABC LTDA, que tem como objetivo principal registrar vendas de celulares. Desde a fase inicial de configuração do ambiente utilizando Docker, até a implementação de funcionalidades avançadas, como testes unitários, documentação completa dos endpoints e a adoção de práticas de desenvolvimento, incluindo Clean Architecture e Conventional Commits.
+A robustez e confiabilidade do código são garantidas por meio da implementação de testes unitários utilizando o PHPUnit. Esses testes abrangem diversos cenários, incluindo a criação de vendas, o cancelamento e o detalhamento das mesmas. Além disso, a documentação abrangente dos endpoints contribui para uma compreensão clara e eficiente da API, facilitando tanto o desenvolvimento contínuo quanto a manutenção do sistema.
 
 **Principais Funcionalidades:**
 - Listagem dos produtos disponíveis no banco de dados;
