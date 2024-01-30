@@ -30,33 +30,39 @@ Certifique-se de que o Docker e o Docker Compose estejam instalados na máquina.
 ```
 https://github.com/mrlonmra/desafio-backend-adoorei.git
 ```
-3. Arquivo .env: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.
+2. Arquivo .env: Cópie o arquivo .envcopy e renomeie para .env e faça as alterações necessárias.
 ```
 cp .env.example .env
 ```
-5. Docker Compose: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.
-6. Instale as dependências
+
+3. Docker Compose: Verifique se o arquivo docker-compose.yml está configurado corretamente, especialmente em relação aos serviços (app e mysql), portas expostas e redes.
+   
+4. Instale as dependências
 ```
 composer install
 ```
-7.  Construa os Contêineres Docker:
+5.  Construa os Contêineres Docker:
 ```
 docker-compose build
 ```
-9. Inicie os Contêineres Docker:
+6. Inicie os Contêineres Docker:
 ```
 docker-compose up -d
 ```
-11. Rode as migrations e as seeds
+7. Rode o Comando para gerar uma nova key
 ```
-php artisan migration
+php artisan key:generate
+```
+08. Rode as migrations e as seeds
+```
+php artisan migrate
 php artisan seeds
 ```
-13. Acesse a Aplicação: Após essas etapas, a aplicação Laravel deve estar acessível em
+09. Acesse a Aplicação: Após essas etapas, a aplicação Laravel deve estar acessível em
 ```
 http://localhost:8000
 ```
-15. A documentação completa dos endpoints está disponível no Swagger através do link
+10. A documentação completa dos endpoints está disponível no Swagger através do link
 ```
 http://localhost:8000/api/documentation#/default.
 ```
