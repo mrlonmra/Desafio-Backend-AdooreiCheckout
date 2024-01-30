@@ -56,11 +56,15 @@ php artisan key:generate
 08. Rode as migrations e as seeds
 ```
 php artisan migrate
-php artisan seeds
+php artisan db:seed
 ```
 09. Acesse a Aplicação: Após essas etapas, a aplicação Laravel deve estar acessível em
 ```
 http://localhost:8000
+```
+08. Rode os testes com PhpUnit
+```
+php artisan test
 ```
 10. A documentação completa dos endpoints está disponível no Swagger através do link
 ```
