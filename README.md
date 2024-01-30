@@ -68,7 +68,7 @@ php artisan test
 ```
 10. A documentação completa dos endpoints está disponível no Swagger através do link
 ```
-http://localhost:8000/api/documentation#/default.
+http://localhost:8000/api/documentation#/default/
 ```
 ![image](https://github.com/mrlonmra/desafio-backend-adoorei/assets/26064875/c0520ffa-f0db-4350-8715-62fa34725b27)
 
